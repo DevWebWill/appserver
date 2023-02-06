@@ -68,6 +68,31 @@ router.post('/login', (req, res) => {
 
 router.get("/isuserauth", verifyJWT, (req, res) => {
     return res.json({isLogin: true, email: req.user.email})
+    
+    /* let email = req.user.email
+    User.findOne({email: email})
+        .then(dbUser => {
+            if(!dbUser) {
+                return res.json({
+                    message: "El usuario no existe"
+                })
+            } else {
+                let user = {
+                    city: dbUser.city,
+                    country: dbUser.country,
+                    createdAt: dbUser.createdAt,
+                    email: dbUser.email,
+                    name: dbUser.name,
+                    occupation: dbUser.oç,
+                    phoneNumber: dbUser.phoneNumber,
+                    role: dbUser.role,
+                    state: dbUser.state,
+                    transactions: dbUser.transactions,
+                    _id: dbUser._id
+                }
+                return res.json({isLogin: true, user: user})
+            }
+        }) */
 })
 
 export default router;

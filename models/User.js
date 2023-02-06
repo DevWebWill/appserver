@@ -39,10 +39,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: ''
         },
-        transactions: {
-            type: String,
-            default: ''
-        },
+        listTasks: [],
         role: {
             type: String,
             enum: ["user", "admin", "superadmin"],

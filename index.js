@@ -7,9 +7,10 @@ import helmet from 'helmet';
 import morgan from "morgan";
 
 
-import verifyJWT from "./routes/verifyjwt.js";
+//import verifyJWT from "./routes/verifyjwt.js";
 import authRoutes from "./routes/auth.js";
-import User from "./models/User.js";
+import userRoutes from "./routes/user.js";
+import taskRoutes from "./routes/task.js";
 
 // DATA IMPORTS
 //import User from "./models/User.js";
@@ -35,33 +36,8 @@ app.get('/', function(req, res) {
 });
 
 app.use("/", authRoutes);
-
-app.get('/getuser', verifyJWT, (req, res) => {
-    let email = req.user.email
-    User.findOne({email: email})
-        .then(dbUser => {
-            if(!dbUser) {
-                return res.json({
-                    message: "El usuario no existe"
-                })
-            } else {
-                let user = {
-                    city: dbUser.city,
-                    country: dbUser.country,
-                    createdAt: dbUser.createdAt,
-                    email: dbUser.email,
-                    name: dbUser.name,
-                    occupation: dbUser.oç,
-                    phoneNumber: dbUser.phoneNumber,
-                    role: dbUser.role,
-                    state: dbUser.state,
-                    transactions: dbUser.transactions,
-                    _id: dbUser._id
-                }
-                return res.json({isLogin: true, user: user})
-            }
-        })
-})
+app.use("/user", userRoutes);
+app.use("/task", taskRoutes);
 
 /** MONGOOSE SETUP */
 const PORT = process.env.PORT || 5001;
