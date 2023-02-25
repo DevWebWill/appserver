@@ -1,11 +1,9 @@
-import express from "express";
-import verifyJWT from "./verifyjwt.js";
-import User from "../models/User.js";
-import Task from "../models/Task.js";
+import Task from "../models/Task.model.js"
+import User from "../models/User.model.js"
 
-const router = express.Router();
 
-router.put('/set-task', async (req, res) => {
+
+export const setTask = async (req, res) => {
     const obj = req.body
     const task = obj.task
 
@@ -17,7 +15,7 @@ router.put('/set-task', async (req, res) => {
             })
         } else {
             //console.log("Aqui: ", dbUser._id)
-            console.log(task.date)
+            //console.log(task.date)
             const dbTask = new Task({
                 name: task.name,
                 date: task.date,
@@ -31,11 +29,10 @@ router.put('/set-task', async (req, res) => {
                 message: 'Tarea añadida al usuario con éxito'
             })
         }    
-    })
-    
-}) 
+    })   
+}
 
-router.delete('/delete-task', async (req, res) => {
+export const deleteTask = async (req, res) => {
     const obj = req.body
 
     Task.deleteOne({_id: obj.idTask}).
@@ -52,14 +49,14 @@ router.delete('/delete-task', async (req, res) => {
             })
         }
     })
-})
+}
 
-router.get('/get-tasks', verifyJWT, (req, res) => {
+export const getTask = async (req, res) => {
     let id = req.user.id
     
     Task.find({iduser: id}).sort({date: 1})
         .then(dbTask => {
-            console.log(dbTask)
+            //console.log(dbTask)
             if(!dbTask) {
                 return res.json({
                     status: 404,
@@ -74,6 +71,4 @@ router.get('/get-tasks', verifyJWT, (req, res) => {
                 })
             }
         })
-})
-
-export default router;
+}

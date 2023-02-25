@@ -1,12 +1,8 @@
-import express from "express";
+import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import User from "../models/User.js";
-import verifyJWT from "./verifyjwt.js";
 
-const router = express.Router();
-
-router.post('/register', async (req, res) => {
+export const registerAuth = async (req, res) => {
     const user = req.body
 
     //Chequea si el usuario existe
@@ -26,9 +22,9 @@ router.post('/register', async (req, res) => {
         dbUser.save()
         res.json({message: 'Success'})
     }
-})
+}
 
-router.post('/login', (req, res) => {
+export const loginAuth = (req, res) => {
     const userLogin = req.body;
 
     User.findOne({email: userLogin.email})
@@ -64,9 +60,9 @@ router.post('/login', (req, res) => {
                     }
                 })
         })
-});
+}
 
-router.get("/isuserauth", verifyJWT, (req, res) => {
+export const isUserAuth = (req, res) => {
     return res.json({isLogin: true, email: req.user.email})
     
     /* let email = req.user.email
@@ -93,6 +89,4 @@ router.get("/isuserauth", verifyJWT, (req, res) => {
                 return res.json({isLogin: true, user: user})
             }
         }) */
-})
-
-export default router;
+}

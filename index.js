@@ -8,9 +8,9 @@ import morgan from "morgan";
 
 
 //import verifyJWT from "./routes/verifyjwt.js";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
-import taskRoutes from "./routes/task.js";
+import authRoutes from "./src/routes/auth.js";
+import userRoutes from "./src/routes/user.js";
+import taskRoutes from "./src/routes/task.js";
 
 // DATA IMPORTS
 //import User from "./models/User.js";
@@ -36,7 +36,7 @@ app.get('/', function(req, res) {
 });
 
 app.use("/", authRoutes);
-app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/task", taskRoutes);
 
 /** MONGOOSE SETUP */
