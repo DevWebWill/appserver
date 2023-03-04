@@ -8,6 +8,12 @@ const UserSchema = new mongoose.Schema(
             min: 2,
             max: 100,
         },
+        age: {
+            type: Number,
+            required: true,
+            min: 18,
+            max: 130
+        },
         email: {
             type: String,
             required: true,
@@ -39,7 +45,6 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: ''
         },
-        listTasks: [],
         role: {
             type: String,
             enum: ["user", "admin", "superadmin"],

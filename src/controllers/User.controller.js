@@ -27,45 +27,63 @@ export const getUser = async (req, res) => {
 }
 
 export const getAllUsers = async (req, res) => {    
-    /** Captura de parametros */
 
-    /** Parámetro para limitar el resultado */
+    /** Obtenemos el parámetro (limit) para limitar el resultado */
     let limit = req.query.limit
+    /** Obtenemos el parámetro (skip) para el salto de la paginación */
+    let skip = req.query.skip
 
-    /** Eliminamos el parámetro limit del objeto porque este se pasará de forma diferente */
+    if (limit === undefined || limit === null) {
+        limit = 10
+    } else if (skip === undefined || skip === null) {
+        skip = 0
+    }
+
+    /** 
+     * Obtenemos el resto de los parámetros y eliminamos el parámetro 
+     * limit del objeto porque este se pasará de forma diferente 
+     */
     let queryObj = req.query
     delete queryObj.limit
 
+    /** Obtenemos las llaves del objeto quueryObj */
+    let keys = Object.keys(queryObj)
+    
     /** 
-     * Mapeamos el resto de los parámetros y los colocamos en una matriz bidimensional  
-     * con el [key, value]
+     * Creamos el objeto donde se guardarán los filtros que pasaremos al find 
      */
-    let filtersArray = Object.keys(queryObj).map((key) => [key, queryObj[key]] )
+    let objectFilter = {}
 
-    /**
-     * Recorremos la matriz para transformar el value en una expresión regular con la 
-     * opción en minúsculas para la búsqueda
-     */    
-    filtersArray.forEach(f => {
-        f[1] = {$regex: f[1], $options: 'i'}
-    })
-
-    /**
-     * Convertimos el array en el objeto {key1: value1, key2, value2}... que pasaremos en la 
-     * búsqueda 
+    /** 
+     * Recorreomos el array de keys y accedemos a los values del objeto queryObj
+     * para crear el objectFilter que será pasado al find 
      */
-    let filtersObj = Object.fromEntries(filtersArray)
+    keys.forEach(key => {
+        objectFilter[key] = Array.isArray(queryObj[key]) ? { $in: queryObj[key] } : { $regex: queryObj[key], $options: 'i' } 
+    });
 
+    /** Obtenemos el usuario logueado */
     let email = req.user.email
+
     User.findOne({email: email})
-        .then(dbUser => {
+        .then( async (dbUser) => {
             if(!dbUser) {
+                /** Si el usuario no está logueado o no existe */
                 return res.json({
                     message: "El usuario no existe"
                 })
             } else {
-                User.find(filtersObj).limit(limit).exec((err, us) => {
-                    return res.json({isLogin: true, users: us})
+                /** Si el usuario está logueado hacemos la busqueda con los filtros */
+
+                /** Buscamos el total */
+                
+                let total = await User.countDocuments( objectFilter );
+                
+
+                /** Búsqueda */
+                User.find( objectFilter ).skip(skip).limit(limit).exec((err, us) => {
+                    console.log('total: ', total)
+                    return res.json({isLogin: true, users: us, total: total})
                 })
             }
         })

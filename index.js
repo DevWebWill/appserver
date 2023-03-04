@@ -13,8 +13,8 @@ import userRoutes from "./src/routes/user.js";
 import taskRoutes from "./src/routes/task.js";
 
 // DATA IMPORTS
-//import User from "./models/User.js";
-//import {dataUser} from "./data/index.js"
+/* import User from "./src/models/User.model.js";
+import { users } from "./data/index.js" */
 
 /** CONFIGURATIONS */
 dotenv.config();
@@ -49,5 +49,5 @@ mongoose.connect(process.env.MONGO_URL, {
     app.listen(PORT, () => console.log(`Servidor iniciado en el puerto ${PORT} y conectado a la base de datos`))
 
     /** ONLY ADD ONE TIME */
-    //User.insertMany(dataUser);
+    //User.insertMany(users);
 }).catch((error) => console.log(`No se pudo conectar: ${error}`))

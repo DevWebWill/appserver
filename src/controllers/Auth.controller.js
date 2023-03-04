@@ -15,6 +15,7 @@ export const registerAuth = async (req, res) => {
 
         const dbUser = new User({
             name: user.name,
+            age: 26,
             email: user.email.toLowerCase(),
             password: user.password
         })
