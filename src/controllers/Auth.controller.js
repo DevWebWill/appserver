@@ -63,6 +63,85 @@ export const loginAuth = (req, res) => {
         })
 }
 
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+export const loginWithGoogle = async (req, res) => {
+    const userLogin = req.body;
+    
+    fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${userLogin.access_token}`)
+                .then(res => res.json())
+                .then(async data => {
+                    const name = data.given_name
+                    const email = data.email
+                    const picture = data.picture
+                    const email_verified = data.email_verified
+                    const locale = data.locale
+
+                    let random1 = Math.round(getRandomArbitrary(100000, 1000000))
+                    let random2 = Math.round(getRandomArbitrary(100000, 1000000))
+                    let pass = `${random1}.${name}.${random2}`
+                    let password = await bcrypt.hash(pass, 10)
+
+                    User.findOne({email: email})
+                        .then(async dbUser => {
+                            if(!dbUser) {
+                                //Registrar y loguear
+                                const dbUser = new User({
+                                    name: name,
+                                    age: 26,
+                                    email: email,
+                                    password: password,
+                                    avatar: picture
+                                })
+
+                                await dbUser.save()
+
+                                const payload = {
+                                    id: dbUser._id,
+                                    email: dbUser.email
+                                }
+                                jwt.sign(
+                                    payload,
+                                    process.env.REACT_APP_JWT_SECRET,
+                                    {expiresIn: 86400},
+                                    (err, token) => {
+                                        if(err) return res.json({message: err})
+                                        return res.json({
+                                            message: 'Success',
+                                            token: "Bearer " + token
+                                        })
+                                    }
+                                )
+
+                            } else {
+                                //Loguear
+                                const payload = {
+                                    id: dbUser._id,
+                                    email: dbUser.email
+                                }
+                                jwt.sign(
+                                    payload,
+                                    process.env.REACT_APP_JWT_SECRET,
+                                    {expiresIn: 86400},
+                                    (err, token) => {
+                                        if(err) return res.json({message: err})
+                                        return res.json({
+                                            message: 'Success',
+                                            token: "Bearer " + token
+                                        })
+                                    }
+                                )
+                            }
+                        })
+                })
+    
+                /* return res.json({
+                    message: 'Usuario o contraseña inválidoss'
+                }) */
+}  
+
 export const isUserAuth = (req, res) => {
     return res.json({isLogin: true, email: req.user.email})
     
