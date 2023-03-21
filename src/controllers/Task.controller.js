@@ -32,6 +32,30 @@ export const setTask = async (req, res) => {
     })   
 }
 
+export const moveTask = async (req, res) => {
+    const obj = req.body
+    const _id = obj._id
+
+    Task.updateOne(
+            { _id: obj._id },
+            { $set: 
+                {
+                    name: obj.name,
+                    date: new Date(obj.date),
+                    status: obj.status 
+                }
+            }
+        ).then((data) => {
+            //console.log(obj)
+            res.json({
+                status: 200,
+                message: `Se ha actualizado la tarea con id ${obj._id}`
+            })
+        })   
+        
+       
+}
+
 export const deleteTask = async (req, res) => {
     const obj = req.body
 

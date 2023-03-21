@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from "morgan";
 
+import http from 'http'
+import { createServer } from 'http'
+import  { Server } from 'socket.io';
 
 //import verifyJWT from "./routes/verifyjwt.js";
 import authRoutes from "./src/routes/auth.js";
@@ -27,6 +30,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
+const httpServer = http.createServer(app);
+var io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }
+})
+
+io.on("connection", (socket) => {
+    socket.on("sendMessage", (message, callback) => {
+        io.emit('message', message);
+        callback();
+    });
+
+    socket.on("createTask", (task, callback) => {
+        io.emit('createdTask', task);
+        io.emit('newNotification', 'La tarea se ha creado correctamente');
+        callback();
+    });
+
+    socket.on("deleteTask", (id) => {
+        io.emit('deletedTask', id);
+    });
+
+    socket.on("updateTask", (task) => {
+        io.emit('updatedTask', task);
+    });
+});
+
 /** ROUTES */
 app.get('/', function(req, res) {
     res.json({
@@ -46,7 +78,7 @@ mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-    app.listen(PORT, () => console.log(`Servidor iniciado en el puerto ${PORT} y conectado a la base de datos`))
+    httpServer.listen(PORT, () => console.log(`Servidor iniciado en el puerto ${PORT} y conectado a la base de datos`))
 
     /** ONLY ADD ONE TIME */
     //User.insertMany(users);

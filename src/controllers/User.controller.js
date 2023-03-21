@@ -4,7 +4,7 @@ export const getUser = async (req, res) => {
     let email = req.user.email
     User.findOne({email: email})
         .then(dbUser => {
-            if(!dbUser) {
+            if(!dbUser && dbUser) {
                 return res.json({
                     message: "El usuario no existe"
                 })
@@ -83,7 +83,7 @@ export const getAllUsers = async (req, res) => {
 
                 /** Búsqueda */
                 User.find( objectFilter ).skip(skip).limit(limit).exec((err, us) => {
-                    console.log('total: ', total)
+                    //console.log('total: ', total)
                     return res.json({isLogin: true, users: us, total: total})
                 })
             }
