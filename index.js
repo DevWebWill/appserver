@@ -33,7 +33,7 @@ app.use(cors());
 const httpServer = http.createServer(app);
 var io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.URL_CORS,
       methods: ["GET", "POST"]
     }
 })
