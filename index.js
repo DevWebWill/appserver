@@ -33,9 +33,10 @@ app.use(cors());
 const httpServer = http.createServer(app);
 var io = new Server(httpServer, {
     cors: {
-      origin: process.env.URL_CORS,
+      origin: '*',
       methods: ["GET", "POST"]
-    }
+    },
+    maxHttpBufferSize: 1e8
 })
 
 let arrayRooms = [];
