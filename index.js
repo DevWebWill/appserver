@@ -38,11 +38,12 @@ var io = new Server(httpServer, {
     }
 })
 
+let arrayRooms = [];
 io.on("connection", (socket) => {
-    socket.on("sendMessage", (message, callback) => {
+    /* socket.on("sendMessage", (message, callback) => {
         io.emit('message', message);
         callback();
-    });
+    }); */
 
     socket.on("createTask", (task, callback) => {
         io.emit('createdTask', task);
@@ -57,12 +58,29 @@ io.on("connection", (socket) => {
     socket.on("updateTask", (task) => {
         io.emit('updatedTask', task);
     });
+
+    //Chat
+    socket.on("join", ({name, room}, callback) => {
+        io.emit('superadmin', {client: name, room: room})
+
+        socket.join(room)
+        callback()
+    });
+    socket.on("joinadmin", ({name, room}, callback) => {
+        socket.join(room);
+        callback(room)
+    });
+    socket.on('sendMessage', ({name, room, message}, callback) => {
+        io.to(room).emit('message', { client: name, room: room, message: message});
+        callback();
+    })
+
 });
 
 /** ROUTES */
 app.get('/', function(req, res) {
     res.json({
-        name: "Bill",
+        name: "Billyyyyy",
         age: 99
     })
 });

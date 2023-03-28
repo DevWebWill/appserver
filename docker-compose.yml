@@ -1,0 +1,18 @@
+# Version of Docker-compose
+version: '1.0'
+services:
+  # Service name
+  node:
+    # Creating a custom image
+    build:
+      # Location to the Dockerfile
+      context: .
+      # Name of the Dockerfile
+      dockerfile: Dockerfile
+    ports:
+        # External port:Internal port
+      - 5001:5001
+    
+    # working_dir: /usr/src/app
+    # volumes:
+    #   - ./:/usr/src/app
