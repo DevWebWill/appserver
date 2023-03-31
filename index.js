@@ -33,8 +33,8 @@ app.use(cors());
 const httpServer = http.createServer(app);
 var io = new Server(httpServer, {
     cors: {
-      origin: 'https://williamrodriguez.net',
-      //methods: ["GET", "POST"]
+      origin: '*',
+      methods: ["GET", "POST"]
     },
     maxHttpBufferSize: 1e8
 })
